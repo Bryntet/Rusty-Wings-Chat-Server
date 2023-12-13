@@ -3,9 +3,9 @@ use crate::models::{
 };
 use crate::schema::{conversation_users, conversations, messages, users};
 use diesel::{PgConnection, QueryDsl, QueryResult, RunQueryDsl};
-use crate::schema::users::user_id;
 
-pub fn create_user(conn: &mut PgConnection, new_user: NewUser) -> diesel::QueryResult<User> {
+
+pub fn create_user(conn: &mut PgConnection, new_user: NewUser) -> QueryResult<User> {
     diesel::insert_into(users::table)
         .values(&new_user)
         .get_result(conn)
@@ -14,13 +14,13 @@ pub fn create_user(conn: &mut PgConnection, new_user: NewUser) -> diesel::QueryR
 pub fn create_message(
     conn: &mut PgConnection,
     new_message: NewMessage,
-) -> diesel::QueryResult<Message> {
+) -> QueryResult<Message> {
     diesel::insert_into(messages::table)
         .values(&new_message)
         .get_result(conn)
 }
 
-fn new_convo(conn: &mut PgConnection) -> diesel::QueryResult<Conversation> {
+fn new_convo(conn: &mut PgConnection) -> QueryResult<Conversation> {
     diesel::insert_into(conversations::table)
         .default_values().get_result(conn)
 }
@@ -28,7 +28,7 @@ fn new_convo(conn: &mut PgConnection) -> diesel::QueryResult<Conversation> {
 pub fn create_conversation(
     conn: &mut PgConnection,
     new_conversation: NewConversation,
-) -> diesel::QueryResult<Conversation> {
+) -> QueryResult<Conversation> {
     let conversation = new_convo(conn)?;
 
     let sender = ConversationUser {
@@ -50,7 +50,7 @@ pub fn create_conversation(
     Ok(conversation)
 }
 
-pub fn get_user(conn: &mut PgConnection, id: &str) -> diesel::QueryResult<User> {
+pub fn get_user(conn: &mut PgConnection, id: &str) -> QueryResult<User> {
     match users::table.load::<User>(conn) {
         Ok(users) => users
             .into_iter()
@@ -59,7 +59,7 @@ pub fn get_user(conn: &mut PgConnection, id: &str) -> diesel::QueryResult<User> 
         Err(e) => Err(e),
     }
 }
-pub fn get_users(conn: &mut PgConnection) -> diesel::QueryResult<Vec<User>> {
+pub fn get_users(conn: &mut PgConnection) -> QueryResult<Vec<User>> {
     users::table.load::<User>(conn)
 }
 

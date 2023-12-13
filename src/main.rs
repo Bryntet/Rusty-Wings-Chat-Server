@@ -1,15 +1,14 @@
 mod handler;
 use rusty_wings_chat_lib::*;
-use axum::handler::Handler;
-use axum::response::IntoResponse;
+
+
 use axum::{
     routing::{get, post},
     Router,
 };
-use std::ops::DerefMut;
+
 use std::sync::Arc;
 
-use diesel::prelude::*;
 
 use tokio::sync::Mutex;
 

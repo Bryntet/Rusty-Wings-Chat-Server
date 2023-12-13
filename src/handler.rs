@@ -1,10 +1,10 @@
 use axum::extract::Path;
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
-use axum::{Extension, Json};
+use axum::Json;
 use diesel::PgConnection;
 use rusty_wings_chat_lib::models::*;
-use std::ops::{Deref, DerefMut};
+use std::ops::DerefMut;
 use std::sync::Arc;
 use tokio::sync::Mutex;
 macro_rules! create_post_handler {
