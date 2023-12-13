@@ -1,6 +1,5 @@
 mod handler;
-use rusty_wings_chat_lib::*;
-
+use rusty_wings_chat_lib::establish_connection;
 
 use axum::{
     routing::{get, post},
@@ -8,7 +7,6 @@ use axum::{
 };
 
 use std::sync::Arc;
-
 
 use tokio::sync::Mutex;
 
@@ -20,7 +18,10 @@ async fn main() {
     axum::serve(listener, app).await.unwrap();
 }
 fn make_router() -> Router {
-    use handler::*;
+    use handler::{
+        create_conversation, create_message, create_user, get_conversation, get_conversations,
+        get_user, get_users,
+    };
 
     let pool = Arc::new(Mutex::new(establish_connection()));
 

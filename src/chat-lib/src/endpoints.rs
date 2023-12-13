@@ -1,3 +1,5 @@
+#![allow(clippy::missing_errors_doc)]
+
 use crate::models::{
     Conversation, ConversationUser, Message, NewConversation, NewMessage, NewUser, User,
 };
@@ -5,18 +7,18 @@ use crate::schema::{conversation_users, conversations, messages, users};
 use diesel::{PgConnection, QueryDsl, QueryResult, RunQueryDsl};
 
 
-pub fn create_user(conn: &mut PgConnection, new_user: NewUser) -> QueryResult<User> {
+pub fn create_user(conn: &mut PgConnection, new_user: &NewUser) -> QueryResult<User> {
     diesel::insert_into(users::table)
-        .values(&new_user)
+        .values(new_user)
         .get_result(conn)
 }
 
 pub fn create_message(
     conn: &mut PgConnection,
-    new_message: NewMessage,
+    new_message: &NewMessage,
 ) -> QueryResult<Message> {
     diesel::insert_into(messages::table)
-        .values(&new_message)
+        .values(new_message)
         .get_result(conn)
 }
 
@@ -27,7 +29,7 @@ fn new_convo(conn: &mut PgConnection) -> QueryResult<Conversation> {
 
 pub fn create_conversation(
     conn: &mut PgConnection,
-    new_conversation: NewConversation,
+    new_conversation: &NewConversation,
 ) -> QueryResult<Conversation> {
     let conversation = new_convo(conn)?;
 
@@ -69,9 +71,7 @@ pub fn get_conversation(
     conv_id: &str
 ) -> Result<Vec<Message>, diesel::result::Error> {
     use diesel::ExpressionMethods;
-    use crate::schema::messages::dsl::*;
-
-
+    use crate::schema::messages::dsl::{conversation_id, messages};
     messages
         .filter(conversation_id.eq(conv_id.parse::<i32>().unwrap_or(-1)))
         .load::<Message>(conn)
@@ -82,7 +82,7 @@ pub fn get_conversations(
     u_id: &str
 ) -> Result<Vec<Conversation>, diesel::result::Error> {
     use diesel::ExpressionMethods;
-    use crate::schema::conversation_users::dsl::*;
+    use crate::schema::conversation_users::dsl::{conversation_users, user_id};
     Ok(conversation_users
         .filter(user_id.eq(u_id.parse::<i32>().unwrap_or(-1)))
         .get_results::<ConversationUser>(conn)?.iter().map(|c_u| Conversation{conversation_id: c_u.conversation_id}).collect())

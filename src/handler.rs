@@ -3,7 +3,7 @@ use axum::http::StatusCode;
 use axum::response::IntoResponse;
 use axum::Json;
 use diesel::PgConnection;
-use rusty_wings_chat_lib::models::*;
+use rusty_wings_chat_lib::models::{NewConversation, NewMessage, NewUser};
 use std::ops::DerefMut;
 use std::sync::Arc;
 use tokio::sync::Mutex;
@@ -14,7 +14,7 @@ macro_rules! create_post_handler {
             conn: Arc<Mutex<PgConnection>>,
         ) -> impl IntoResponse {
             let mut conn = conn.lock().await;
-            match rusty_wings_chat_lib::endpoints::$name(conn.deref_mut(), data) {
+            match rusty_wings_chat_lib::endpoints::$name(conn.deref_mut(), &data) {
                 Ok(j) => Ok(Json(j)),
                 Err(e) => Err((StatusCode::INTERNAL_SERVER_ERROR, e.to_string())),
             }
@@ -36,17 +36,18 @@ macro_rules! create_get_handler {
             Path(path): Path<String>,
             conn: Arc<Mutex<PgConnection>>,
         ) -> impl IntoResponse {
-            match rusty_wings_chat_lib::endpoints::$name((conn.lock().await).deref_mut(), path.as_str()) {
+            match rusty_wings_chat_lib::endpoints::$name(
+                (conn.lock().await).deref_mut(),
+                path.as_str(),
+            ) {
                 Ok(j) => Ok(Json(j)),
                 Err(e) => Err((StatusCode::INTERNAL_SERVER_ERROR, e.to_string())),
             }
         }
     };
 }
-pub(crate) async fn get_users(
-    conn: Arc<Mutex<PgConnection>>,
-) -> impl IntoResponse {
-    match rusty_wings_chat_lib::endpoints::get_users((conn.lock().await).deref_mut()) {
+pub(crate) async fn get_users(conn: Arc<Mutex<PgConnection>>) -> impl IntoResponse {
+    match rusty_wings_chat_lib::endpoints::get_users(&mut *(conn.lock().await)) {
         Ok(j) => Ok(Json(j)),
         Err(e) => Err((StatusCode::INTERNAL_SERVER_ERROR, e.to_string())),
     }
