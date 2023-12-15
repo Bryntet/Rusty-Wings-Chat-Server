@@ -1,12 +1,13 @@
 pub mod endpoints;
 pub mod models;
 pub mod schema;
+mod methods;
+
 use diesel::pg::PgConnection;
 use diesel::prelude::*;
 use dotenvy::dotenv;
 use std::env;
 
-#[allow(clippy::missing_panics_doc)]
 #[must_use] pub fn establish_connection() -> PgConnection {
     dotenv().ok();
 

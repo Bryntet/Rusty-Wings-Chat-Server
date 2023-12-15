@@ -20,7 +20,3 @@ version = "0.4.31"
 
 [lints.rust]
 unsafe_code = "forbid"
-
-[lints.clippy]
-pedantic = "warn"
-all = "warn"

@@ -8,14 +8,16 @@ diesel::table! {
 }
 
 diesel::table! {
-    conversations (conversation_id) {
-        conversation_id -> Int4,
+    conversations (id) {
+        id -> Int4,
+        #[max_length = 255]
+        name -> Nullable<Varchar>,
     }
 }
 
 diesel::table! {
-    messages (message_id) {
-        message_id -> Int4,
+    messages (id) {
+        id -> Int4,
         conversation_id -> Int4,
         user_id -> Int4,
         timestamp -> Timestamptz,
@@ -24,8 +26,8 @@ diesel::table! {
 }
 
 diesel::table! {
-    users (user_id) {
-        user_id -> Int4,
+    users (id) {
+        id -> Int4,
         #[max_length = 255]
         username -> Varchar,
     }

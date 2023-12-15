@@ -9,6 +9,7 @@ use axum::{
 use std::sync::Arc;
 
 use tokio::sync::Mutex;
+use crate::handler::get_conversation_users;
 
 #[tokio::main]
 async fn main() {
@@ -18,10 +19,7 @@ async fn main() {
     axum::serve(listener, app).await.unwrap();
 }
 fn make_router() -> Router {
-    use handler::{
-        create_conversation, create_message, create_user, get_conversation, get_conversations,
-        get_user, get_users,
-    };
+    use handler::*;
 
     let pool = Arc::new(Mutex::new(establish_connection()));
 
@@ -43,7 +41,7 @@ fn make_router() -> Router {
             }),
         )
         .route(
-            "/user/:id",
+            "/user/:username",
             get({
                 let pool = Arc::clone(&pool);
                 move |path| get_user(path, Arc::clone(&pool))
@@ -60,7 +58,10 @@ fn make_router() -> Router {
             "/create-conversation",
             post({
                 let pool = Arc::clone(&pool);
-                move |body| create_conversation(body, pool)
+                move |body| { 
+                    dbg!(&body);
+                    create_conversation(body, pool) 
+                }
             }),
         )
         .route(
@@ -77,6 +78,10 @@ fn make_router() -> Router {
                 move |path| get_conversations(path, Arc::clone(&pool))
             }),
         )
+        .route("/conversation-users/:conversation_id", get({
+            let pool = Arc::clone(&pool);
+            move |path| get_conversation_users(path, Arc::clone(&pool))
+        }))
 }
 
 // basic handler that responds with a static string

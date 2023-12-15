@@ -11,13 +11,3 @@ axum = "0.7.2"
 tokio = { version = "1.34.0", features = ["rt", "rt-multi-thread", "macros"] }
 rusty-wings-chat-lib = { path = "src/chat-lib" }
 
-
-[lints.rust]
-unsafe_code = "forbid"
-
-
-[lints.clippy]
-pedantic = "warn"
-all = "warn"
-missing_panics_doc = "allow"
-missing_errors_doc = "allow"
