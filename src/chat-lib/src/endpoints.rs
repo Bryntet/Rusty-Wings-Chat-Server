@@ -8,7 +8,7 @@ use crate::schema::conversations::id;
 use crate::schema::{conversation_users, conversations, messages, users};
 use diesel::prelude::*;
 use diesel::{PgConnection, QueryDsl, QueryResult, RunQueryDsl};
-
+use diesel::result::Error as DieselError;
 pub fn create_user(conn: &mut PgConnection, new_user: &NewUser) -> QueryResult<User> {
     diesel::insert_into(users::table)
         .values(new_user)
@@ -70,7 +70,7 @@ pub fn get_users(conn: &mut PgConnection) -> QueryResult<Vec<User>> {
 pub fn get_conversation(
     conn: &mut PgConnection,
     conv_id: &str,
-) -> Result<Vec<Message>, diesel::result::Error> {
+) -> Result<Vec<Message>, DieselError> {
     use crate::schema::messages::dsl::{conversation_id, messages};
     use diesel::ExpressionMethods;
 
@@ -82,7 +82,7 @@ pub fn get_conversation(
 pub fn get_conversations(
     conn: &mut PgConnection,
     u_id: &str,
-) -> Result<Vec<Conversation>, diesel::result::Error> {
+) -> Result<Vec<Conversation>, DieselError> {
     let user = get_user(conn, u_id)?;
     Ok(user.get_conversations(conn))
 }
@@ -90,7 +90,7 @@ pub fn get_conversations(
 pub fn get_conversation_users(
     conn: &mut PgConnection,
     conversation_id: &str,
-) -> Result<Vec<ConversationUser>, diesel::result::Error> {
+) -> Result<Vec<ConversationUser>, DieselError> {
     use crate::schema::conversation_users::dsl::{
         conversation_id as user_conv_id, conversation_users,
     };
@@ -104,4 +104,11 @@ pub fn get_conversation_users(
                 .id),
         )
         .load::<ConversationUser>(conn)
+}
+pub fn user_exists(conn: &mut PgConnection, username: &str) -> Result<bool, DieselError> {
+    use crate::schema::users::dsl::{username as user_name, users};
+    Ok(users
+        .filter(user_name.eq(username))
+        .first::<User>(conn)
+        .is_ok())
 }

@@ -44,6 +44,15 @@ pub(crate) async fn get_users(conn: Arc<Mutex<PgConnection>>) -> impl IntoRespon
     }
 }
 
+pub(crate) async fn user_exists(Path(path): Path<String>, conn: Arc<Mutex<PgConnection>>) -> impl IntoResponse {
+    match rusty_wings_chat_lib::endpoints::user_exists(&mut *(conn.lock().await), path.as_str()) {
+        Ok(j) => Ok((StatusCode::OK, j.to_string())),
+        Err(e) => Err((StatusCode::INTERNAL_SERVER_ERROR, e.to_string())),
+    }
+}
+
+
+
 use rusty_wings_chat_lib::models::{NewConversation, NewMessage, NewUser};
 create_post_handler!(create_user, NewUser);
 create_post_handler!(create_message, NewMessage);

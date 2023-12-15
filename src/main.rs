@@ -85,6 +85,13 @@ fn make_router() -> Router {
                 move |path| get_conversation_users(path, Arc::clone(&pool))
             }),
         )
+        .route(
+            "/user-exists/:username",
+            get({
+                let pool = Arc::clone(&pool);
+                move |path| user_exists(path, Arc::clone(&pool))
+            }),
+        )
 }
 
 // basic handler that responds with a static string
