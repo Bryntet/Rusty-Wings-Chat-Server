@@ -8,8 +8,8 @@ use axum::{
 
 use std::sync::Arc;
 
-use tokio::sync::Mutex;
 use crate::handler::get_conversation_users;
+use tokio::sync::Mutex;
 
 #[tokio::main]
 async fn main() {
@@ -58,9 +58,9 @@ fn make_router() -> Router {
             "/create-conversation",
             post({
                 let pool = Arc::clone(&pool);
-                move |body| { 
+                move |body| {
                     dbg!(&body);
-                    create_conversation(body, pool) 
+                    create_conversation(body, pool)
                 }
             }),
         )
@@ -78,10 +78,13 @@ fn make_router() -> Router {
                 move |path| get_conversations(path, Arc::clone(&pool))
             }),
         )
-        .route("/conversation-users/:conversation_id", get({
-            let pool = Arc::clone(&pool);
-            move |path| get_conversation_users(path, Arc::clone(&pool))
-        }))
+        .route(
+            "/conversation-users/:conversation_id",
+            get({
+                let pool = Arc::clone(&pool);
+                move |path| get_conversation_users(path, Arc::clone(&pool))
+            }),
+        )
 }
 
 // basic handler that responds with a static string

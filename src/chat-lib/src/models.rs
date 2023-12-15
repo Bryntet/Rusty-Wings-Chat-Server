@@ -29,8 +29,8 @@ pub struct NewUser {
     pub username: String,
 }
 
-use schema::messages;
 use crate::schema::conversations::dsl::conversations;
+use schema::messages;
 
 #[derive(Insertable, Serialize, Deserialize)]
 #[diesel(table_name = messages)]
@@ -40,8 +40,18 @@ pub struct NewMessage {
     pub user_id: i32,
 }
 
-
-#[derive(Queryable, Selectable, Insertable, Serialize, Deserialize, Associations, Identifiable, Default, Debug, PartialEq)]
+#[derive(
+    Queryable,
+    Selectable,
+    Insertable,
+    Serialize,
+    Deserialize,
+    Associations,
+    Identifiable,
+    Default,
+    Debug,
+    PartialEq,
+)]
 #[diesel(primary_key(conversation_id))]
 #[diesel(belongs_to(User))]
 #[diesel(table_name = schema::conversation_users)]
@@ -51,9 +61,18 @@ pub struct ConversationUser {
     pub user_id: i32,
 }
 
-
-
-#[derive(Identifiable, Queryable, Selectable, Insertable, Serialize, Deserialize, Associations, Default, Debug, PartialEq)]
+#[derive(
+    Identifiable,
+    Queryable,
+    Selectable,
+    Insertable,
+    Serialize,
+    Deserialize,
+    Associations,
+    Default,
+    Debug,
+    PartialEq,
+)]
 #[diesel(belongs_to(ConversationUser, foreign_key = id))]
 #[diesel(table_name = schema::conversations)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
@@ -76,5 +95,5 @@ pub(crate) struct NewConvoInternal<'a> {
 pub struct NewConversation {
     pub sender: i32,
     pub receiver: i32,
-    pub title: Option<String>
+    pub title: Option<String>,
 }

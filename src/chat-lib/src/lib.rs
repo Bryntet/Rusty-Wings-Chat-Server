@@ -1,14 +1,15 @@
 pub mod endpoints;
+mod methods;
 pub mod models;
 pub mod schema;
-mod methods;
 
 use diesel::pg::PgConnection;
 use diesel::prelude::*;
 use dotenvy::dotenv;
 use std::env;
 
-#[must_use] pub fn establish_connection() -> PgConnection {
+#[must_use]
+pub fn establish_connection() -> PgConnection {
     dotenv().ok();
 
     let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");

@@ -21,8 +21,6 @@ macro_rules! create_post_handler {
     };
 }
 
-
-
 macro_rules! create_get_handler {
     ($name:ident) => {
         pub(crate) async fn $name(
